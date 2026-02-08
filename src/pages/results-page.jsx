@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { getGradeColor } from '@/lib/utils'
+import { getGradeColor } from '@/libs/utils'
 
 export default function ResultsPage() {
     const results = {
