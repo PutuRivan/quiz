@@ -5,7 +5,7 @@ import { Button } from '../ui/button'
 
 export default function NewQuizForm() {
   return (
-    <form className='space-y-4'>
+    <form className='space-y-8'>
       <FieldGroup>
         <div className='grid grid-cols-2 gap-4'>
           {/* Number of Questions */}

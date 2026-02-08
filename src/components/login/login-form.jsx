@@ -9,20 +9,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/context/auth-context'
 
 export default function LoginForm() {
-    const navigate = useNavigate()
     const { register,
         handleSubmit,
         formState: { errors }
     } = useForm({
         resolver: zodResolver(loginSchema)
     })
-    const { login } = useAuth()
+    const { login, isLoading } = useAuth()
+    const navigate = useNavigate()
 
     const onSubmit = (data) => {
         login(data)
-        if (login) {
-            navigate('/home')
-        }
+        navigate('/home', { replace: true })
     }
 
     return (
@@ -45,7 +43,13 @@ export default function LoginForm() {
                 />
                 {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
             </Field>
-            <Button type="submit" className='w-full'>Sign In</Button>
+            <Button
+                type="submit"
+                className='w-full'
+                disabled={isLoading}
+            >
+                {isLoading ? "Loading..." : "Sign In"}
+            </Button>
         </form>
     )
 }

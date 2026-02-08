@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { AuthContext } from '../context/auth-context'
-import { useNavigate } from 'react-router'
+import { loginSchema } from '@/libs/schema'
+import { toast } from 'sonner'
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -17,22 +18,26 @@ export default function AuthProvider({ children }) {
 
   const login = ({ username, password }) => {
     setIsLoading(true)
+
     try {
-      const validateUser = loginSchema.safeParse({ username, password })
-      if (!validateUser.success) {
-        throw new Error(validateUser.error.errors[0].message)
+      const result = loginSchema.safeParse({ username, password })
+
+      if (!result.success) {
+        const message = result.error.errors?.[0]?.message || 'Invalid input'
+        throw new Error(message)
       }
 
-      const userData = validateUser.data
+      const userData = result.data
+
       localStorage.setItem('quizUser', JSON.stringify(userData))
 
       setUser(userData)
-
+      toast.success('Login successful')
     } catch (error) {
+      console.error('Login error:', error)
 
       setError(error.message)
-      return false
-
+      toast.error(error.message)
     } finally {
       setIsLoading(false)
     }
