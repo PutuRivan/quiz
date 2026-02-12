@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { getGradeColor } from '@/libs/utils'
 import { useLocation, useNavigate } from 'react-router'
 import { useEffect } from 'react'
-import { useQuiz } from '@/hooks/use-quiz'
+import { useQuiz } from '@/context/quiz-context'
 
 export default function ResultsPage() {
     const location = useLocation()

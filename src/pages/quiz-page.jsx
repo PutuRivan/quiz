@@ -1,7 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { useQuiz } from '@/hooks/use-quiz'
+import { useQuiz } from '@/context/quiz-context'
 import { useNavigate } from 'react-router'
 import { useEffect } from 'react'
 import { LoaderIcon } from 'lucide-react'

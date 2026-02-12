@@ -1,10 +1,11 @@
-import { decodeHtml, shuffleArray } from "@/libs/utils";
-import { useCallback, useEffect, useState } from "react";
-import { useTimer } from "./use-timer";
+import React, { useCallback, useEffect, useState } from 'react'
+import { decodeHtml, shuffleArray } from '@/libs/utils'
+import { useTimer } from '@/hooks/use-timer'
+import { QuizContext } from '../context/quiz-context'
 
 const QUIZ_STORAGE_KEY = 'quiz_state';
 
-export function useQuiz() {
+export default function QuizProvider({ children }) {
   // Quiz data
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(false)
@@ -97,10 +98,14 @@ export function useQuiz() {
   };
 
   const startQuiz = (config) => {
+    console.log('🎯 startQuiz called with config:', config);
     setQuizConfig(config);
     setCurrentQuestionIndex(0);
     setAnswers({});
-    setTimeRemaining(config.duration * 60); // Convert minutes to seconds
+    const timeInSeconds = config.duration * 60;
+    console.log('⏰ Setting time remaining to:', timeInSeconds, 'seconds (', config.duration, 'minutes )');
+    setTimeRemaining(timeInSeconds); // Convert minutes to seconds
+    console.log('▶️ Setting isQuizActive to true');
     setIsQuizActive(true);
     setIsQuizComplete(false);
   };
@@ -178,24 +183,28 @@ export function useQuiz() {
       percentage: questions.length > 0 ? (correct / questions.length * 100).toFixed(1) : 0
     };
   };
-
-  return {
-    fetchQuestions,
-    questions,
-    loading,
-    currentQuestionIndex,
-    answers,
-    timeRemaining,
-    isQuizActive,
-    isQuizComplete,
-    answerQuestion,
-    completeQuiz,
-    resetQuiz,
-    resumeQuiz,
-    getResults,
-    quizConfig,
-    startQuiz,
-    hasSavedQuiz,
-    getSavedQuizInfo,
-  }
+  return (
+    <QuizContext.Provider
+      value={{
+        fetchQuestions,
+        questions,
+        loading,
+        currentQuestionIndex,
+        answers,
+        timeRemaining,
+        isQuizActive,
+        isQuizComplete,
+        answerQuestion,
+        completeQuiz,
+        resetQuiz,
+        resumeQuiz,
+        getResults,
+        quizConfig,
+        startQuiz,
+        hasSavedQuiz,
+        getSavedQuizInfo
+      }}>
+      {children}
+    </QuizContext.Provider>
+  )
 }

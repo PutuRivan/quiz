@@ -3,7 +3,7 @@ import NewQuizForm from '@/components/home/new-quiz-form'
 import { Card, CardContent } from '@/components/ui/card'
 import React from 'react'
 import { useNavigate } from 'react-router'
-import { useQuiz } from '@/hooks/use-quiz'
+import { useQuiz } from '@/context/quiz-context'
 import ResumeQuizDialog from '@/components/home/resume-quiz-dialog'
 
 export default function HomePage() {
