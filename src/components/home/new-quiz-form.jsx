@@ -38,8 +38,7 @@ export default function NewQuizForm() {
   }, []);
 
   const onSubmit = async (data) => {
-    // Convert duration from minutes to seconds
-    const durationInSeconds = parseInt(data.duration) * 60
+    const durationInSeconds = parseInt(data.duration)
     const response = await fetchQuestions(data.amount, data.category, data.difficulty)
     if (response.success) {
       startQuiz({

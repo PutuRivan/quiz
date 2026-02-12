@@ -2,43 +2,43 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { getGradeColor } from '@/libs/utils'
+import { useLocation, useNavigate } from 'react-router'
+import { useEffect } from 'react'
+import { useQuiz } from '@/hooks/use-quiz'
 
 export default function ResultsPage() {
-    const results = {
-        totalQuestions: 10,
-        correctAnswers: 2,
-        incorrectAnswers: 7,
-        answeredQuestions: 9,
-        unansweredQuestions: 1,
-        score: 20.0, // percentage
-        grade: 'F',
-        gradeMessage: 'Need More Practice',
-        questions: [
-            {
-                id: 1,
-                question: "Which of the following is the world's best-selling book?",
-                yourAnswer: "The Lord of the Rings",
-                correctAnswer: "The Lord of the Rings",
-                isCorrect: false,
-                category: "Entertainment: Books"
-            },
-            {
-                id: 2,
-                question: "Who was the original author of Frankenstein?",
-                yourAnswer: "Bram Stoker",
-                correctAnswer: "Mary Shelley",
-                isCorrect: false,
-                category: "Entertainment: Books"
-            },
-            {
-                id: 3,
-                question: "What was JK Rowling's original name in 'The Railway Series' and its animated counterpart 'Thomas and Friends'?",
-                yourAnswer: "Hattori",
-                correctAnswer: "Hattori",
-                isCorrect: true,
-                category: "Entertainment: Books"
-            }
-        ]
+    const location = useLocation()
+    const navigate = useNavigate()
+    const results = location.state?.results
+    const { resetQuiz } = useQuiz()
+
+    // Redirect to home if no results
+    useEffect(() => {
+        if (!results) {
+            navigate('/home')
+        }
+    }, [results, navigate])
+
+    const handleRetakeQuiz = () => {
+        resetQuiz()
+        navigate('/home')
+    }
+
+    const handleExit = () => {
+        resetQuiz()
+        navigate('/home')
+    }
+
+    if (!results) {
+        return (
+            <main className='flex flex-col max-w-5xl mx-auto p-5 gap-5'>
+                <Card>
+                    <CardContent className='p-8 text-center'>
+                        <p>Loading results...</p>
+                    </CardContent>
+                </Card>
+            </main>
+        )
     }
 
     return (
@@ -95,11 +95,13 @@ export default function ResultsPage() {
                     {/* Action Buttons */}
                     <div className='flex justify-center gap-4'>
                         <Button
+                            onClick={handleRetakeQuiz}
                             size='lg'
                         >
                             🔄 Take Another Quiz
                         </Button>
                         <Button
+                            onClick={handleExit}
                             variant='outline'
                             size='lg'
                         >
