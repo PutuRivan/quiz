@@ -16,17 +16,27 @@ export function useQuiz() {
   const [isQuizActive, setIsQuizActive] = useState(false);
   const [quizConfig, setQuizConfig] = useState(null);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
+  const [hasSavedQuiz, setHasSavedQuiz] = useState(false);
 
   useEffect(() => {
     const savedQuizState = localStorage.getItem(QUIZ_STORAGE_KEY);
     if (savedQuizState) {
-      const state = JSON.parse(savedQuizState);
-      setQuestions(state.questions || []);
-      setCurrentQuestionIndex(state.currentQuestionIndex || 0);
-      setAnswers(state.answers || {});
-      setTimeRemaining(state.timeRemaining || 0);
-      setIsQuizActive(state.isQuizActive || false);
-      setQuizConfig(state.quizConfig || null);
+      try {
+        const state = JSON.parse(savedQuizState);
+        // Check if there's an active quiz that's not complete
+        if (state.isQuizActive && state.questions && state.questions.length > 0) {
+          setHasSavedQuiz(true);
+          setQuestions(state.questions || []);
+          setCurrentQuestionIndex(state.currentQuestionIndex || 0);
+          setAnswers(state.answers || {});
+          setTimeRemaining(state.timeRemaining || 0);
+          setIsQuizActive(false); // Don't auto-resume, wait for user action
+          setQuizConfig(state.quizConfig || null);
+        }
+      } catch (error) {
+        console.error('Error parsing saved quiz state:', error);
+        localStorage.removeItem(QUIZ_STORAGE_KEY);
+      }
     }
   }, []);
 
@@ -122,12 +132,26 @@ export function useQuiz() {
     setIsQuizActive(false);
     setIsQuizComplete(false);
     setQuizConfig(null);
+    setHasSavedQuiz(false);
     localStorage.removeItem(QUIZ_STORAGE_KEY);
   };
 
   const resumeQuiz = () => {
     setIsQuizActive(true);
     setIsQuizComplete(false);
+    setHasSavedQuiz(false);
+  };
+
+  const getSavedQuizInfo = () => {
+    if (!hasSavedQuiz || questions.length === 0) {
+      return null;
+    }
+    return {
+      currentQuestion: currentQuestionIndex + 1,
+      totalQuestions: questions.length,
+      answered: Object.keys(answers).length,
+      timeRemaining: timeRemaining
+    };
   };
 
   const getResults = () => {
@@ -171,5 +195,7 @@ export function useQuiz() {
     getResults,
     quizConfig,
     startQuiz,
+    hasSavedQuiz,
+    getSavedQuizInfo,
   }
 }
