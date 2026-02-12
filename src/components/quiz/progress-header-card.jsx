@@ -17,19 +17,19 @@ export default function ProgressHeaderCard({ currentQuestionIndex, questions, an
           {/* Answered */}
           <div className='text-center'>
             <p className='text-muted-foreground text-sm mb-1'>Answered</p>
-            <p className='text-2xl font-bold text-green-600'>{answeredCount}</p>
+            <p className='text-2xl font-bold text-accent'>{answeredCount}</p>
           </div>
 
           {/* Remaining */}
           <div className='text-center'>
             <p className='text-muted-foreground text-sm mb-1'>Remaining</p>
-            <p className='text-2xl font-bold text-blue-600'>{questions.length - answeredCount}</p>
+            <p className='text-2xl font-bold text-chart-5'>{questions.length - answeredCount}</p>
           </div>
 
           {/* Time Left */}
           <div className='text-center'>
             <p className='text-muted-foreground text-sm mb-1'>Time Left</p>
-            <p className={`text-2xl font-bold ${timeRemaining < 60 ? 'text-red-600' : 'text-foreground'}`}>
+            <p className={`text-2xl font-bold ${timeRemaining < 60 ? 'text-destructive' : 'text-foreground'}`}>
               {formatTime(timeRemaining)}
             </p>
           </div>

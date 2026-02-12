@@ -1,14 +1,12 @@
 import Header from '@/components/home/header'
 import NewQuizForm from '@/components/home/new-quiz-form'
 import { Card, CardContent } from '@/components/ui/card'
-import { useAuth } from '@/context/auth-context'
 import React from 'react'
 import { useNavigate } from 'react-router'
 import { useQuiz } from '@/hooks/use-quiz'
 import ResumeQuizDialog from '@/components/home/resume-quiz-dialog'
 
 export default function HomePage() {
-    const { user } = useAuth()
     const navigate = useNavigate()
     const { resetQuiz, resumeQuiz, hasSavedQuiz, getSavedQuizInfo } = useQuiz()
 
@@ -39,7 +37,7 @@ export default function HomePage() {
             />
 
             <main className='flex flex-col max-w-5xl mx-auto p-5 gap-5'>
-                <Header username={user?.username} />
+                <Header />
                 <Card>
                     <CardContent className='space-y-4'>
                         <div className='space-y-1'>

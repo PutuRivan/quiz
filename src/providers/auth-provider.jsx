@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('quizUser');
@@ -29,14 +28,32 @@ export default function AuthProvider({ children }) {
 
       const userData = result.data
 
-      localStorage.setItem('quizUser', JSON.stringify(userData))
+      // Cek apakah ada daftar users di localStorage
+      const usersData = localStorage.getItem('quizUsers')
+      const users = usersData ? JSON.parse(usersData) : []
 
-      setUser(userData)
-      toast.success('Login successful')
+      // Cari user berdasarkan username
+      const existingUser = users.find(u => u.username === userData.username)
+
+      if (existingUser) {
+        // Jika user sudah ada, cek apakah password sama
+        if (existingUser.password !== userData.password) {
+          throw new Error('Password salah')
+        }
+        // Password benar, login berhasil
+        localStorage.setItem('quizUser', JSON.stringify(existingUser))
+        setUser(existingUser)
+        toast.success('Login berhasil')
+      } else {
+        // Jika user belum ada, tambahkan user baru
+        users.push(userData)
+        localStorage.setItem('quizUsers', JSON.stringify(users))
+        localStorage.setItem('quizUser', JSON.stringify(userData))
+        setUser(userData)
+        toast.success('Registrasi berhasil! Anda telah login')
+      }
     } catch (error) {
       console.error('Login error:', error)
-
-      setError(error.message)
       toast.error(error.message)
     } finally {
       setIsLoading(false)
