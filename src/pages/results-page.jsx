@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -116,7 +115,7 @@ export default function ResultsPage() {
                     <h2 className='text-2xl font-bold mb-6'>Question Review</h2>
 
                     <div className='space-y-4 max-h-[500px] overflow-y-auto pr-2'>
-                        {results.questions.map((q, index) => (
+                        {results.questions.map((q) => (
                             <div
                                 key={q.id}
                                 className={`p-5 rounded-lg border-2 ${q.isCorrect

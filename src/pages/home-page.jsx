@@ -11,11 +11,11 @@ export default function HomePage() {
     return (
         <main className='flex flex-col max-w-5xl mx-auto p-5 gap-5'>
             <Header username={user?.username} />
-            <div className='grid grid-cols-3 gap-5'>
+            {/* <div className='grid grid-cols-3 gap-5'>
                 <SetupCard title="Total Questions" value="0" />
                 <SetupCard title="Minutes" value="0" />
                 <SetupCard title="Difficulty" value="Easy" />
-            </div>
+            </div> */}
             <Card>
                 <CardContent className='space-y-4'>
                     <div className='space-y-1'>

@@ -2,49 +2,28 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import React, { useState } from 'react'
+import { formatTime } from '@/libs/utils'
+import { useQuiz } from '@/hooks/use-quiz'
 
 export default function QuizPage() {
-    // Sample state - replace with actual quiz data
-    const [currentQuestion, setCurrentQuestion] = useState(0)
-    const [selectedAnswer, setSelectedAnswer] = useState(null)
-    const [answeredCount, setAnsweredCount] = useState(9)
-    const [timeLeft, setTimeLeft] = useState(0) // in seconds
+    const {
+        questions,
+        currentQuestionIndex,
+        answers,
+        timeRemaining,
+        answerQuestion,
+        completeQuiz,
+    } = useQuiz();
+    const currentQuestion = questions[currentQuestionIndex];
+    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+    const answeredCount = Object.keys(answers).length;
 
-    // Sample quiz data - replace with actual data from API
-    const quizData = {
-        totalQuestions: 10,
-        questions: [
-            {
-                question: "What is the capital of France?",
-                options: ["London", "Berlin", "Paris", "Madrid"],
-                correctAnswer: 2
-            }
-            // Add more questions...
-        ]
-    }
-
-    const totalQuestions = quizData.totalQuestions
-    const remaining = totalQuestions - answeredCount
-    const progress = (currentQuestion / totalQuestions) * 100
-
-    // Format time as MM:SS
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60)
-        const secs = seconds % 60
-        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
-    }
-
-    const handleAnswerSelect = (index) => {
-        setSelectedAnswer(index)
-    }
-
-    const handleNextQuestion = () => {
-        if (selectedAnswer !== null) {
-            setAnsweredCount(prev => prev + 1)
-            setCurrentQuestion(prev => prev + 1)
-            setSelectedAnswer(null)
-        }
+    if (!currentQuestion) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+                <div className="text-white text-xl">Loading question...</div>
+            </div>
+        );
     }
 
     return (
@@ -55,34 +34,36 @@ export default function QuizPage() {
                     <div className='grid grid-cols-4 gap-6 mb-4'>
                         {/* Question Counter */}
                         <div className='text-center'>
-                            <p>Question</p>
-                            <p>{currentQuestion + 1}/{totalQuestions}</p>
+                            <p className='text-muted-foreground text-sm mb-1'>Question</p>
+                            <p className='text-2xl font-bold'> {currentQuestionIndex + 1}/{questions.length}</p>
                         </div>
 
                         {/* Answered */}
                         <div className='text-center'>
-                            <p>Answered</p>
-                            <p>{answeredCount}</p>
+                            <p className='text-muted-foreground text-sm mb-1'>Answered</p>
+                            <p className='text-2xl font-bold text-green-600'>{answeredCount}</p>
                         </div>
 
                         {/* Remaining */}
                         <div className='text-center'>
-                            <p>Remaining</p>
-                            <p>{remaining}</p>
+                            <p className='text-muted-foreground text-sm mb-1'>Remaining</p>
+                            <p className='text-2xl font-bold text-blue-600'>{questions.length - answeredCount}</p>
                         </div>
 
                         {/* Time Left */}
                         <div className='text-center'>
-                            <p>Time Left</p>
-                            <p>{formatTime(timeLeft)}</p>
+                            <p className='text-muted-foreground text-sm mb-1'>Time Left</p>
+                            <p className={`text-2xl font-bold ${timeRemaining < 60 ? 'text-red-600' : 'text-foreground'}`}>
+                                {formatTime(timeRemaining)}
+                            </p>
                         </div>
                     </div>
 
                     {/* Progress Bar */}
                     <div className='space-y-2'>
                         <div className='flex justify-between items-center'>
-                            <span>Progress</span>
-                            <span>{Math.round(progress)}%</span>
+                            <span className='text-sm font-medium'>Progress</span>
+                            <span className='text-sm font-medium'>{Math.round(progress)}%</span>
                         </div>
                         <Progress value={progress} />
                     </div>
@@ -96,57 +77,60 @@ export default function QuizPage() {
                     <div className='mb-6'>
                         <div className='flex items-center gap-3 mb-4'>
                             <Badge variant='secondary' className='text-sm px-3 py-1'>
-                                Question {currentQuestion + 1}
+                                Question {currentQuestionIndex + 1}
                             </Badge>
                             <Badge variant='outline' className='text-sm px-3 py-1'>
-                                Multiple Choice
+                                {currentQuestion.category}
+                            </Badge>
+                            <Badge variant='outline' className='text-sm px-3 py-1 capitalize'>
+                                {currentQuestion.difficulty}
                             </Badge>
                         </div>
                         <h2 className='text-2xl font-bold text-foreground leading-relaxed'>
-                            {quizData.questions[0]?.question || "Loading question..."}
+                            {currentQuestion.question}
                         </h2>
                     </div>
 
                     {/* Answer Options */}
-                    <div className='space-y-3 mb-8'>
-                        {quizData.questions[0]?.options.map((option, index) => (
-                            <button
+                    <div className='flex flex-col gap-5'>
+                        {currentQuestion.allAnswers.map((option, index) => (
+                            <Button
                                 key={index}
-                                onClick={() => handleAnswerSelect(index)}
-                                className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md ${selectedAnswer === index
-                                    ? 'border-primary bg-primary/10 shadow-md'
-                                    : 'border-border hover:border-primary/50 bg-card'
-                                    }`}
+                                variant='outline'
+                                onClick={() => answerQuestion(currentQuestion.id, option)}
+                                className='w-full h-16 text-lg font-medium text-start justify-start'
                             >
-                                <div className='flex items-center gap-4'>
-                                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-semibold ${selectedAnswer === index
-                                        ? 'border-primary bg-primary text-primary-foreground'
-                                        : 'border-muted-foreground text-muted-foreground'
-                                        }`}>
+                                <div className="flex items-center space-x-4">
+                                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform">
                                         {String.fromCharCode(65 + index)}
                                     </div>
-                                    <span className={`text-lg ${selectedAnswer === index ? 'font-semibold' : ''
-                                        }`}>
+                                    <span>
                                         {option}
                                     </span>
                                 </div>
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
                     {/* Navigation Buttons */}
                     <div className='flex flex-col items-center gap-4 pt-6 border-t'>
-                        <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                            <span className='text-lg'>💡</span>
-                            <span>Select an answer to automatically proceed to the next question</span>
+                        <div className="text-center">
+                            <p className="text-foreground text-sm">
+                                💡 Select an answer to automatically proceed to the next question
+                            </p>
                         </div>
 
-                        <Button
-                            onClick={handleNextQuestion}
-                            size='lg'
-                        >
-                            Complete Quiz Now
-                        </Button>
+                        {/* Emergency Complete Button */}
+                        {currentQuestionIndex === questions.length - 1 && (
+                            <div className="mt-6 text-center">
+                                <Button
+                                    onClick={completeQuiz}
+                                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg"
+                                >
+                                    Complete Quiz Now
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
