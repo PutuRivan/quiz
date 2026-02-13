@@ -29,14 +29,12 @@ export function useTimer(isActive, timeRemaining, setTimeRemaining, onComplete) 
           return prev - 1;
         });
       }, 1000);
-      console.log('✅ Interval created:', intervalRef.current);
     } else {
       console.log('⏸️ Timer not started:', { isActive, timeRemaining });
     }
 
     return () => {
       if (intervalRef.current) {
-        console.log('🧹 Cleanup: clearing interval');
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }

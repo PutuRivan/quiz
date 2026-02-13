@@ -40,13 +40,14 @@ export default function NewQuizForm() {
 
   const onSubmit = async (data) => {
     const durationInSeconds = parseInt(data.duration)
-    const response = await fetchQuestions(data.amount, data.category, data.difficulty)
+    const response = await fetchQuestions(data.amount, data.category, data.difficulty, data.type)
     if (response.success) {
       startQuiz({
         amount: data.amount,
         category: data.category,
         difficulty: data.difficulty,
-        duration: durationInSeconds
+        duration: durationInSeconds,
+        type: data.type,
       })
       navigate('/quiz')
       toast.success('Quiz started successfully')
