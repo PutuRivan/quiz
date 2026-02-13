@@ -19,15 +19,13 @@ export default function QuizPage() {
     } = useQuiz();
 
     const currentQuestion = questions[currentQuestionIndex];
-    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
     const answeredCount = Object.keys(answers).length;
+    const progress = (answeredCount / questions.length) * 100;
 
-    // Navigate to results when quiz is complete
     useEffect(() => {
         if (isQuizComplete) {
             const results = getResults();
 
-            // Calculate grade
             const percentage = parseFloat(results.percentage);
             let grade = 'F';
             let gradeMessage = 'Need More Practice';

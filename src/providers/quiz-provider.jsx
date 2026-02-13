@@ -59,7 +59,7 @@ export default function QuizProvider({ children }) {
     completeQuiz();
   });
 
-  const fetchQuestions = async (amount = 10, category = '', difficulty = '', type = 'multiple') => {
+  const fetchQuestions = async (amount = 10, category = '', difficulty = '', type = '') => {
     setLoading(true);
     try {
       let url = `https://opentdb.com/api.php?amount=${amount}`;
@@ -98,14 +98,11 @@ export default function QuizProvider({ children }) {
   };
 
   const startQuiz = (config) => {
-    console.log('🎯 startQuiz called with config:', config);
     setQuizConfig(config);
     setCurrentQuestionIndex(0);
     setAnswers({});
     const timeInSeconds = config.duration * 60;
-    console.log('⏰ Setting time remaining to:', timeInSeconds, 'seconds (', config.duration, 'minutes )');
     setTimeRemaining(timeInSeconds); // Convert minutes to seconds
-    console.log('▶️ Setting isQuizActive to true');
     setIsQuizActive(true);
     setIsQuizComplete(false);
   };

@@ -15,7 +15,8 @@ export default function NewQuizForm() {
       amount: '10',
       duration: '10',
       category: '9',
-      difficulty: 'easy'
+      difficulty: 'easy',
+      type: 'multiple',
     }
   })
   const {
@@ -103,6 +104,7 @@ export default function NewQuizForm() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
+                      <SelectItem value="1">1</SelectItem>
                       <SelectItem value="5">5</SelectItem>
                       <SelectItem value="10">10</SelectItem>
                       <SelectItem value="15">15</SelectItem>
@@ -173,6 +175,30 @@ export default function NewQuizForm() {
             )}
           />
         </div>
+        <Controller
+          name="type"
+          rules={{ required: true }}
+          control={control}
+          render={({ field }) => (
+            <Field>
+              <FieldLabel>Type</FieldLabel>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="multiple">Multiple Choice</SelectItem>
+                    <SelectItem value="boolean">True/False</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+          )}
+        />
       </FieldGroup>
       <Button
         type="submit"
