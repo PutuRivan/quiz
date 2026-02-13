@@ -5,6 +5,8 @@ import { getGradeColor } from '@/libs/utils'
 import { useLocation, useNavigate } from 'react-router'
 import { useEffect } from 'react'
 import { useQuiz } from '@/context/quiz-context'
+import QuestionsReviewContainer from '@/components/result/questions-review-container'
+import StatsCard from '@/components/result/stats-card'
 
 export default function ResultsPage() {
     const location = useLocation()
@@ -47,9 +49,9 @@ export default function ResultsPage() {
             <Card>
                 <CardContent className='p-8'>
                     {/* Header */}
-                    <div className='text-center mb-8'>
+                    <div className='text-center mb-8 text-card-foreground'>
                         <h1 className='text-3xl font-bold mb-2 flex items-center justify-center gap-2'>
-                            Quiz Complete! 🎉
+                            Quiz Complete!
                         </h1>
                         <p>Here's how you performed!</p>
                     </div>
@@ -57,39 +59,19 @@ export default function ResultsPage() {
                     {/* Grade Display */}
                     <div className='flex flex-col items-center mb-8'>
                         <div className={`${getGradeColor(results.grade)} w-32 h-32 rounded-2xl flex items-center justify-center shadow-2xl mb-4`}>
-                            <span className='text-white text-6xl font-bold'>{results.grade}</span>
+                            <span className='text-card-foreground text-6xl font-bold'>{results.grade}</span>
                         </div>
                         <p>{results.gradeMessage}</p>
-                        <p className='font-bold text-3xl'>{results.score}%</p>
-                        <p>Overall Score</p>
+                        <p className='font-bold text-3xl text-center text-accent'>{results.score}%</p>
+                        <p className='text-card-foreground'>Overall Score</p>
                     </div>
 
                     {/* Statistics Grid */}
                     <div className='grid grid-cols-4 gap-4 mb-6'>
-                        <Card>
-                            <CardContent>
-                                <p className='text-3xl font-bold text-center'>{results.correctAnswers}</p>
-                                <p className='text-center'>Correct</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardContent>
-                                <p className='text-3xl font-bold text-center'>{results.incorrectAnswers}</p>
-                                <p className='text-center'>Incorrect</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardContent>
-                                <p className='text-3xl font-bold text-center'>{results.answeredQuestions}</p>
-                                <p className='text-center'>Answered</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardContent>
-                                <p className='text-3xl font-bold text-center'>{results.unansweredQuestions}</p>
-                                <p className='text-center'>Unanswered</p>
-                            </CardContent>
-                        </Card>
+                        <StatsCard value={results.correctAnswers} label='Correct' />
+                        <StatsCard value={results.incorrectAnswers} label='Incorrect' />
+                        <StatsCard value={results.answeredQuestions} label='Answered' />
+                        <StatsCard value={results.unansweredQuestions} label='Unanswered' />
                     </div>
 
                     {/* Action Buttons */}
@@ -112,56 +94,7 @@ export default function ResultsPage() {
             </Card>
 
             {/* Question Review Section */}
-            <Card>
-                <CardContent className='p-6'>
-                    <h2 className='text-2xl font-bold mb-6'>Question Review</h2>
-
-                    <div className='space-y-4 max-h-[500px] overflow-y-auto pr-2'>
-                        {results.questions.map((q) => (
-                            <div
-                                key={q.id}
-                                className={`p-5 rounded-lg border-2 ${q.isCorrect
-                                    ? 'bg-green-50 border-green-500 dark:bg-green-950/20'
-                                    : 'bg-red-50 border-red-500 dark:bg-red-950/20'
-                                    }`}
-                            >
-                                <div className='flex items-start justify-between mb-3'>
-                                    <div className='flex items-center gap-3'>
-                                        <Badge
-                                            variant={q.isCorrect ? 'default' : 'destructive'}
-                                            className='text-sm px-3 py-1'
-                                        >
-                                            {q.id}
-                                        </Badge>
-                                        <h3 className='font-semibold text-base'>{q.question}</h3>
-                                    </div>
-                                    <div className='flex-shrink-0'>
-                                        {q.isCorrect ? (
-                                            <span className='text-green-600 text-2xl'>✓</span>
-                                        ) : (
-                                            <span className='text-red-600 text-2xl'>✗</span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className='ml-12 space-y-2 text-sm'>
-                                    <p className='text-muted-foreground'>
-                                        <span className='font-medium'>Category:</span> {q.category}
-                                    </p>
-                                    <p className={q.isCorrect ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}>
-                                        <span className='font-medium'>Your answer:</span> {q.yourAnswer}
-                                    </p>
-                                    {!q.isCorrect && (
-                                        <p className='text-green-700 dark:text-green-400'>
-                                            <span className='font-medium'>Correct answer:</span> {q.correctAnswer}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
-        </main>
+            <QuestionsReviewContainer results={results} />
+        </main >
     )
 } 
